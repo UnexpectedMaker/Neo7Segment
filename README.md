@@ -1,6 +1,8 @@
 # Neo7Segment Display Library
 An API that lets you display numbers and letters on Neo7Segment RGB LED displays that are available from [tindie](https://www.tindie.com/products/seonr/neo7segment-display/)
 
+You can find the Open Source hardware PCB design and Gerber files [here](https://github.com/UnexpectedMaker/Neo7Segment-Design-Files)
+
 ## Installing and Use
 The downloaded code should be added to your arduino IDE libraries folder, and the library requires the [Adafruit NeoPixel library](https://github.com/adafruit/Adafruit_NeoPixel) for it to function.
 
