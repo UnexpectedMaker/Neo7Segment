@@ -1,5 +1,5 @@
 // ---------------------------------------------------------------------------
-// Neo7Segment Library - v1.0 - 28/01/2018
+// Neo7Segment Library - v1.0.1 - 25/04/2018
 //
 // AUTHOR/LICENSE:
 // Created by Seon Rozenblum - seon@unexpectedmaker.com
@@ -25,6 +25,7 @@
 // HISTORY:
 
 //
+// 25/04/2018 v1.0.1 - Fixed bug due to change in Adafruit Neopixel library initialisation
 // 28/01/2018 v1.0 - Initial release.
 //
 // ---------------------------------------------------------------------------

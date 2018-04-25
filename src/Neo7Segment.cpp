@@ -163,7 +163,10 @@ Neo7Segment::Neo7Segment( uint8_t displayCount, uint8_t dPin )
 {
 	dispCount = displayCount;
 	dispPin = dPin;
-	pixels = Adafruit_NeoPixel ( ( dispCount * NUM_PIXELS_PER_BOARD ), dispPin, NEO_GRB + NEO_KHZ800 );
+	pixels = Adafruit_NeoPixel ();
+	pixels.updateType( NEO_GRB + NEO_KHZ800 );
+  	pixels.updateLength( dispCount * NUM_PIXELS_PER_BOARD );
+  	pixels.setPin(dispPin);
 	isReady = false;
 }
 
@@ -179,9 +182,10 @@ bool Neo7Segment::IsReady()
 
 void Neo7Segment::Begin( uint8_t brightness )
 {
+
 	pixels.begin(); // This initializes the NeoPixel library.
-	pixels.clear();
-    pixels.setBrightness( brightness );
+	pixels.show();
+	pixels.setBrightness( brightness );
 
 	cachedString = "";
 	cachedBytes = (byte *) malloc(dispCount * sizeof(byte));
@@ -240,23 +244,32 @@ void Neo7Segment::CheckToCacheBytes( String str )
 		int index = 0;
 		for ( int s = 0; s < str.length(); s++ )
 		{
+			#ifdef DEBUG
 			Serial.print( (String)str.charAt(s) );
 			Serial.print( " .. " );
+			#endif
+
 			if ( (String)str.charAt(s) != "." )
 			{ 
 				cachedBytes[index] = FindByteForCharater( (String)str.charAt(s) );
+				#ifdef DEBUG
 				Serial.println( "1" );
+				#endif
 				index++;
 			}
 			else if ( s > 0 && bitRead( cachedBytes[index-1], 7 ) != 1 )
 			{
 				cachedBytes[index-1] = cachedBytes[index-1] | 0b10000000;
+				#ifdef DEBUG
 				Serial.println( "2" );
+				#endif
 			}
 			else
 			{
 				cachedBytes[index] = 0b10000000;
+				#ifdef DEBUG
 				Serial.println( "3" );
+				#endif
 				index++;
 			}
 		}
