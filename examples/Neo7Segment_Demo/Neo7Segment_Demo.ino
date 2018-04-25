@@ -1,11 +1,7 @@
-#include "RTClib.h"
 #include <Neo7Segment.h>
 
 // Initalise the display with 5 Neo7Segment boards connected to GPIO 4
 Neo7Segment disp( 5, 4 );
-
-// Initialise the RTC library for use in showing the time
-RTC_Millis rtc;
 
 int loopIndex = 0;
 byte rainbowIndex = 0;
@@ -23,9 +19,6 @@ void setup()
 
   // Set the initial display feature to show as 0
   displayFeature = 0;
-
-  // Pull the current date & time from the IDE
-  rtc.begin(DateTime(F(__DATE__), F(__TIME__)));
 }
 
 void loop()
@@ -149,7 +142,7 @@ void loop()
 
       
       case 9:
-        disp.DisplayTime(rtc.now().hour(), rtc.now().minute(), rtc.now().second(), disp.Color(255, 200, 0), disp.Color(0, 0, 255) );
+        disp.DisplayTime( 22, 16, (nextRainbow % 60), disp.Color(255, 200, 0), disp.Color(0, 0, 255) );
         nextRainbow = millis() + 500;
         break;
 
