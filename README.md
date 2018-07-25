@@ -21,3 +21,20 @@ You then start the display with the bebin method, passing the brightness:
 The you simply pass the display the String you would like displayed and a color:
 
     disp.DisplayText( "1234", disp.Color( 255,0,0) );
+    
+# Buy me a coffee?
+I love making and designing projects but sharing open source projects takes a lot of thought and time. I do it because I think it’s important to share knowledge and give back to the community like many have done before me.
+
+If you find this project useful or want to see more open source projects like it, please consider a donation to say thanks!
+
+[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://PayPal.Me/unexpectedmaker)
+
+# Unexpected Maker
+http://twitter.com/unexpectedmaker
+
+https://www.facebook.com/unexpectedmaker/
+
+https://www.instagram.com/unexpectedmaker/
+
+https://www.tindie.com/stores/seonr/
+
