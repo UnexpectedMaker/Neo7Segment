@@ -14,6 +14,16 @@ You can then initialise the display with the following line that includes the nu
 
     Neo7Segment disp( 5, 4 );
 
+You can also initialise the display with custom pixels per segment and pixel per decimal point
+
+	#define PIXELS_DIGITS       5   // Number of digits
+	#define PIXELS_PER_SEGMENT  4   // Pixels per segment - If you want more than 10 pixels per segment, modify the Neo7Segment_Var.cpp
+	#define PIXELS_PER_POINT    1   // Pixels per decimal point - CANNOT be higher than PIXELS_PER_SEGMENT
+	#define PIXELS_PIN          4   // Pin number
+
+	// Initalise the display with 5 Neo7Segment boards, 4 LEDs per segment, 1 decimal point LED, connected to GPIO 4
+	Neo7Segment disp(PIXELS_DIGITS, PIXELS_PER_SEGMENT, PIXELS_PER_POINT, PIXELS_PIN);
+
 You then start the display with the bebin method, passing the brightness:
 
     disp.Begin(20);
