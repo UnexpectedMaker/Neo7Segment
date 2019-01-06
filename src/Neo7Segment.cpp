@@ -1,5 +1,6 @@
 // ---------------------------------------------------------------------------
 // Created by Seon Rozenblum - seon@unexpectedmaker.com
+// Modified by Jean Gauthier P.Eng. - SupremeSports (2019-01-06)
 // Copyright 2016 License: GNU GPL v3 http://www.gnu.org/licenses/gpl-3.0.html
 //
 // See "Neo7Segment.h" for purpose, syntax, version history, links, and more.
@@ -10,35 +11,7 @@
 #include <Adafruit_NeoPixel.h>
 
 //#define DEBUG
-#define USEDP
-#ifdef USEDP
-	#define NUM_PIXELS_PER_BOARD 29
-#else
-	#define NUM_PIXELS_PER_BOARD 28
-#endif
 
-// Array of pixels per segment, 7 segments with 4 pixels each
-byte segmentsPixels[8][4] 	{ { 0, 1, 2, 3 }, 
-                              { 4, 5, 6, 7 }, 
-                              { 8, 9, 10, 11 }, 
-                              { 12, 13, 14, 15 }, 
-                              { 16, 17, 18, 19 }, 
-                              {20, 21, 22, 23 }, 
-                              {24, 25, 26, 27 },
-							  { 28 }
-						  	};
-
-// Array of pixel positions in X,Y format for mapping colours in X,Y space
-byte pixelsXY[29][2]		{ { 1,0 }, { 2,0 }, { 3,0 }, { 4,0 },
-	                          { 5,1 }, { 5,2 }, { 5,3 }, { 5,4 },
-	                          { 5,6 }, { 5,7 }, { 5,8 }, { 5,9 },
-	                          { 4,10 }, { 3,10 }, { 2,10 }, { 1,10 },
-	                          { 0,9 }, { 0,8 }, { 0,7 },  { 0,6 },
-	                          { 0,4 }, { 0,3 }, { 0,2 }, { 0,1 },
-	                          { 1,5 }, { 2,5 }, { 3,5 }, { 4,5 },
-							  { 6,10 }
-						  	};
-					  
 // Array of segment based rainbow colour values
 uint32_t segmentRainbow[7][3] {
                               { 255,0,0 },
@@ -50,78 +23,85 @@ uint32_t segmentRainbow[7][3] {
                               { 255,30,237 }
                             };
 
-// Available characters a 7 Segment display can show					  
-const byte ARRAY_SIZE = 32;
+// Available characters a 7 Segment display can show
+const byte ARRAY_SIZE = 34;
+
 
 byte available_codes[ ARRAY_SIZE ][ 2 ] {
-							{ '0', 0b00111111  }, 
-							{ '1', 0b00000110 },
-							{ '2', 0b01011011 },
-							{ '3', 0b01001111 },
-							{ '4', 0b01100110 },
-							{ '5', 0b01101101 },
-							{ '6', 0b01111100 },
-							{ '7', 0b00000111 },
-							{ '8', 0b01111111 },
-							{ '9', 0b01100111 },
-							{ 'a', 0b01110111 },
-							{ 'b', 0b01111100 },
-							{ 'c', 0b00111001 },
-							{ 'd', 0b01011110 },
-							{ 'e', 0b01111001 },
-							{ 'f', 0b01110001 },
-							{ 'g', 0b01100111 },
-							{ 'h', 0b01110110 },
-							{ 'i', 0b00110000 },
-							{ 'j', 0b00011110 },
-							{ 'l', 0b00111000 },
-							{ 'n', 0b01010100 },
-							{ 'o', 0b01011100 },
-							{ 'p', 0b01110011 },
-							{ 'q', 0b01100111 },
-							{ 'r', 0b01010000 },
-							{ 's', 0b01101101 },
-							{ 'u', 0b00111110 },
-							{ 'x', 0b01110110 },
-							{ 'y', 0b01101110 },
-							{ '-', 0b01000000 },
-							{ ' ', 0b00000000 }
+							//   pgfedcba
+						  { '0', 0b00111111 },
+						  { '1', 0b00000110 },
+						  { '2', 0b01011011 },
+						  { '3', 0b01001111 },
+						  { '4', 0b01100110 },
+						  { '5', 0b01101101 },
+						  { '6', 0b01111101 },
+						  { '7', 0b00000111 },
+						  { '8', 0b01111111 },
+						  { '9', 0b01101111 },
+						  { 'a', 0b01110111 },
+						  { 'b', 0b01111100 },
+						  { 'c', 0b01011000 },
+						  { 'd', 0b01011110 },
+						  { 'e', 0b01111001 },
+						  { 'f', 0b01110001 },
+						  { 'g', 0b01100111 },
+						  { 'h', 0b01110110 },
+						  { 'i', 0b00010000 },
+						  { 'j', 0b00011110 },
+						  { 'l', 0b00110000 },
+						  { 'n', 0b01010100 },
+						  { 'o', 0b01011100 },
+						  { 'p', 0b01110011 },
+						  { 'q', 0b01100111 },
+						  { 'r', 0b01010000 },
+						  { 's', 0b01101101 },
+						  { 't', 0b01111000 },
+						  { 'u', 0b00011100 },
+						  { 'x', 0b01110110 },
+						  { 'y', 0b01101110 },
+						  { 'z', 0b01011011 },
+						  { '-', 0b01000000 },
+						  { ' ', 0b00000000 }
 						};
 
 byte available_codes_upper[ ARRAY_SIZE ][ 2 ] {
-							{ '0', 0b00111111 }, 
-							{ '1', 0b00000110 },
-							{ '2', 0b01011011 },
-							{ '3', 0b01001111 },
-							{ '4', 0b01100110 },
-							{ '5', 0b01101101 },
-							{ '6', 0b01111100 },
-							{ '7', 0b00000111 },
-							{ '8', 0b01111111 },
-							{ '9', 0b01100111 },
-							{ 'a', 0b01110111 },
-							{ 'b', 0b01111111 },
-							{ 'c', 0b00111001 },
-							{ 'd', 0b00111111 },
-							{ 'e', 0b01111001 },
-							{ 'f', 0b01110001 },
-							{ 'g', 0b01100111 },
-							{ 'h', 0b01110110 },
-							{ 'i', 0b00110000 },
-							{ 'j', 0b00011110 },
-							{ 'l', 0b00111000 },
-							{ 'n', 0b00110111 },
-							{ 'o', 0b00111111 },
-							{ 'p', 0b01110011 },
-							{ 'q', 0b01100111 },
-							{ 'r', 0b00110001 },
-							{ 's', 0b01101101 },
-							{ 'u', 0b00111110 },
-							{ 'x', 0b01110110 },
-							{ 'y', 0b01101110 },
-							{ '-', 0b01000000 },
-							{ ' ', 0b00000000 }
-						};					
+							//   pgfedcba
+						  { '0', 0b00111111 },
+						  { '1', 0b00000110 },
+						  { '2', 0b01011011 },
+						  { '3', 0b01001111 },
+						  { '4', 0b01100110 },
+						  { '5', 0b01101101 },
+						  { '6', 0b01111101 },
+						  { '7', 0b00000111 },
+						  { '8', 0b01111111 },
+						  { '9', 0b01101111 },
+						  { 'a', 0b01110111 },
+						  { 'b', 0b01111111 },
+						  { 'c', 0b00111001 },
+						  { 'd', 0b00111111 },
+						  { 'e', 0b01111001 },
+						  { 'f', 0b01110001 },
+						  { 'g', 0b01100111 },
+						  { 'h', 0b01110110 },
+						  { 'i', 0b00110000 },
+						  { 'j', 0b00011110 },
+						  { 'l', 0b00111000 },
+						  { 'n', 0b00110111 },
+						  { 'o', 0b00111111 },
+						  { 'p', 0b01110011 },
+						  { 'q', 0b01100111 },
+						  { 'r', 0b00110001 },
+						  { 's', 0b01101101 },
+						  { 't', 0b01111000 },
+						  { 'u', 0b00111110 },
+						  { 'x', 0b01110110 },
+						  { 'y', 0b01101110 },
+						  { 'z', 0b01011011 },
+						  { '-', 0b01000000 },
+						  { ' ', 0b00000000 }
+						};
 
 byte spinAnimAll[6] 	{
 							0b00000001,
@@ -158,9 +138,19 @@ byte AnimEdgeRight[4] 	{
 							0b00000100,
 							0b00001000
 						};
-													
-Neo7Segment::Neo7Segment( uint8_t displayCount, uint8_t dPin )
+
+Neo7Segment::Neo7Segment( uint8_t displayCount, uint8_t dPixels, uint8_t dpPixels, uint8_t dPin )
 {
+	//Count number of pixels per decimal point (Between 0 and number of segment pixels)
+	dispPixelDp = constrain(dpPixels, 0, constrain(dPixels, 1, PIXELS_PER_SEGMENT_MAX));
+
+	//Count number of pixels per digit board (Between 1 and maximum pixels)
+	NUM_PIXELS_PER_BOARD = ( constrain( dPixels, 1, PIXELS_PER_SEGMENT_MAX )*7) + dispPixelDp;
+
+	//Detect that decimal poiunt is used or not
+	dispUseDP = dpPixels>0 ? true : false;
+
+	dispPixelSegment = dPixels;
 	dispCount = displayCount;
 	dispPin = dPin;
 	pixels = Adafruit_NeoPixel ();
@@ -168,6 +158,66 @@ Neo7Segment::Neo7Segment( uint8_t displayCount, uint8_t dPin )
   	pixels.updateLength( dispCount * NUM_PIXELS_PER_BOARD );
   	pixels.setPin(dispPin);
 	isReady = false;
+}
+
+void Neo7Segment::buildSegmentsPixels()
+{
+	uint8_t segPixels = dispPixelSegment;
+	uint8_t dpPixels = dispPixelDp;
+
+	for ( int i = 0; i < 7; i++ )
+	{
+		for ( int j = 0; j < segPixels; j++ )
+			segmentsPixels[ i ][ j ] = ( i * segPixels ) + j;
+	}
+
+	for ( int j = 0; j < dpPixels; j++ )
+		segmentsPixels[ 7 ][ j ] = ( segPixels * 7) + j;
+}
+
+void Neo7Segment::buildPixelsXY()
+{
+	uint8_t segPixels = dispPixelSegment;
+	uint8_t dpPixels = dispPixelDp;
+	int i = 0;
+
+	for ( i = 0; i < segPixels; i++ )
+	{
+		//A Segment
+		pixelsXY[ i + ( 0*segPixels ) ][ 0 ] = i + 1;
+		pixelsXY[ i + ( 0*segPixels ) ][ 1 ] = 0;
+
+		//B Segment
+		pixelsXY[ i + ( 1*segPixels ) ][ 0 ] = segPixels + 1;
+		pixelsXY[ i + ( 1*segPixels ) ][ 1 ] = i + 1;
+
+		//C Segment
+		pixelsXY[ i + ( 2*segPixels ) ][ 0 ] = segPixels + 1;
+		pixelsXY[ i + ( 2*segPixels ) ][ 1 ] = segPixels + i + 2;
+
+		//D Segment
+		pixelsXY[ i + ( 3*segPixels ) ][ 0 ] = segPixels - i;
+		pixelsXY[ i + ( 3*segPixels ) ][ 1 ] = ( segPixels * 2 ) + 2;
+
+		//E Segment
+		pixelsXY[ i + ( 4*segPixels ) ][ 0 ] = 0;
+		pixelsXY[ i + ( 4*segPixels ) ][ 1 ] = ( ( segPixels * 2 ) + 1 ) - i;
+
+		//F Segment
+		pixelsXY[ i + ( 5*segPixels ) ][ 0 ] = 0;
+		pixelsXY[ i + ( 5*segPixels ) ][ 1 ] = segPixels - i;
+
+		//G Segment
+		pixelsXY[ i + ( 6*segPixels ) ][ 0 ] = i + 1;
+		pixelsXY[ i + ( 6*segPixels ) ][ 1 ] = segPixels + 1;
+	}
+
+	for (i = 0; i < dpPixels; i++)
+	{
+		//DP Segment
+		pixelsXY[ i + ( 7*segPixels ) ][ 0 ] = segPixels + 2;
+		pixelsXY[ i + ( 7*segPixels ) ][ 1 ] = ( segPixels * 2 ) + 2;
+	}
 }
 
 Neo7Segment::~Neo7Segment()
@@ -182,10 +232,15 @@ bool Neo7Segment::IsReady()
 
 void Neo7Segment::Begin( uint8_t brightness )
 {
-
 	pixels.begin(); // This initializes the NeoPixel library.
 	pixels.show();
 	pixels.setBrightness( brightness );
+
+	#ifdef DEBUG
+		Serial.print("Brightness: ");
+		Serial.println(brightness);
+		Serial.println("Ready!");
+	#endif
 
 	cachedString = "";
 	cachedBytes = (byte *) malloc(dispCount * sizeof(byte));
@@ -194,10 +249,13 @@ void Neo7Segment::Begin( uint8_t brightness )
 		cachedBytes[i] = 0;
 
 	#ifdef DEBUG
-		Serial.print("Brightness: ");
-		Serial.println(brightness);
-		Serial.println("Ready!");
+		Serial.print("Initialize: ");
+		Serial.print(dispPixelSegment);
+		Serial.println(" pixels per segment...");
 	#endif
+
+	buildSegmentsPixels();
+	buildPixelsXY();
 
 	//Digits are initialised and ready
 	isReady = true;
@@ -233,7 +291,6 @@ uint32_t Neo7Segment::Color(uint8_t r, uint8_t g, uint8_t b)
 {
   return ((uint32_t)r << 16) | ((uint32_t)g <<  8) | b;
 }
-
 
 void Neo7Segment::CheckToCacheBytes( String str )
 {
@@ -288,6 +345,9 @@ void Neo7Segment::DisplayTextVerticalRainbow( String text, uint32_t colorA, uint
 
 	uint32_t color;
 	
+	int digitHeight = 2 * dispPixelSegment + 3;
+	float digitHeightFloat = 1.0 / float( digitHeight );
+
 	// Grab the byte (bits) for the segmens for the character passed in
 	for ( int s = 0; s < lengthOfLoop; s++ )
 	{
@@ -299,14 +359,14 @@ void Neo7Segment::DisplayTextVerticalRainbow( String text, uint32_t colorA, uint
 			for( int segment = 0; segment < 7; segment++ )
 			{
 				bool on = ( bitRead( code, segment) == 1 );
-				for ( int p = 0; p < 4; p++ )
+				for ( int p = 0; p < dispPixelSegment; p++ )
 				{
 					// we want the Y position (row) so we can use that as the colour index 
 					int y = pixelsXY[ pixelIndex ][1];
 
-					uint8_t red = ((Red(colorA) * (10 - y)) + (Red(colorB) * y)) * 0.1;
-					uint8_t green = ((Green(colorA) * (10 - y)) + (Green(colorB) * y)) * 0.1;
-					uint8_t blue = ((Blue(colorA) * (10 - y)) + (Blue(colorB) * y)) * 0.1;
+					uint8_t red = ((Red(colorA) * (digitHeight - y)) + (Red(colorB) * y)) * digitHeightFloat;
+					uint8_t green = ((Green(colorA) * (digitHeight - y)) + (Green(colorB) * y)) * digitHeightFloat;
+					uint8_t blue = ((Blue(colorA) * (digitHeight - y)) + (Blue(colorB) * y)) * digitHeightFloat;
 
 					color = Color(red, green, blue );
 				
@@ -315,12 +375,12 @@ void Neo7Segment::DisplayTextVerticalRainbow( String text, uint32_t colorA, uint
 				}
 			}
 
-			#ifdef USEDP
-
+			if ( dispUseDP )
+			{
 				bool on = ( bitRead( code, 7) == 1 );
-				pixels.setPixelColor( segmentsPixels[ 7 ][ 0 ], on ? color : Color(0,0,0));
-
-			#endif
+				for ( int p = 0; p < dispPixelDp; p++)
+					pixels.setPixelColor( segmentsPixels[ 7 ][ p ] + ( s * NUM_PIXELS_PER_BOARD ), on ? color : Color(0,0,0) );
+			}
 		}
 	}
 		
@@ -335,7 +395,7 @@ void Neo7Segment::DisplayTextHorizontalRainbow( String text, uint32_t colorA, ui
 	
 	CheckToCacheBytes( text );
 
-	int numPixelsPerColumn = 6;
+	int numPixelsPerColumn = dispPixelSegment + 2;
 	int numColumns = dispCount * numPixelsPerColumn;
 
 	uint32_t color;
@@ -343,7 +403,7 @@ void Neo7Segment::DisplayTextHorizontalRainbow( String text, uint32_t colorA, ui
 	// Clamp the length, so text longer than the display count is ignored
 	int lengthOfLoop = min( dispCount, (uint8_t)text.length() );
 	
-	// Grab the byte (bits) for the segmens for the character passed in
+	// Grab the byte (bits) for the segments for the character passed in
 	for ( int s = 0; s < lengthOfLoop; s++ )
 	{
 		byte code = cachedBytes[s];
@@ -354,7 +414,7 @@ void Neo7Segment::DisplayTextHorizontalRainbow( String text, uint32_t colorA, ui
 			for( int segment = 0; segment < 7; segment++ )
 			{
 				bool on = ( bitRead( code, segment) == 1 );
-				for ( int p = 0; p < 4; p++ )
+				for ( int p = 0; p < dispPixelSegment; p++ )
 				{
 					// we want the Y position (row) so we can use that as the colour index 
 					int x = pixelsXY[ pixelIndex ][0] + ( numPixelsPerColumn * s );
@@ -370,12 +430,12 @@ void Neo7Segment::DisplayTextHorizontalRainbow( String text, uint32_t colorA, ui
 				}
 			}
 
-			#ifdef USEDP
-
+			if ( dispUseDP )
+			{
 				bool on = ( bitRead( code, 7) == 1 );
-				pixels.setPixelColor( segmentsPixels[ 7 ][ 0 ], on ? color : Color(0,0,0));
-
-			#endif
+				for ( int p = 0; p < dispPixelDp; p++ )
+					pixels.setPixelColor( segmentsPixels[ 7 ][ p ] + ( s * NUM_PIXELS_PER_BOARD ), on ? color : Color(0,0,0) );
+			}
 		}
 	}
 		
@@ -393,7 +453,7 @@ void Neo7Segment::DisplayTextMarquee( String text, uint8_t index, uint32_t color
 	// Clamp the length, so text longer than the display count is ignored
 	int lengthOfLoop = min( dispCount, (uint8_t)text.length() );
 
-	// Grab the byte (bits) for the segmens for the character passed in
+	// Grab the byte (bits) for the segments for the character passed in
 	for ( int s = 0; s < lengthOfLoop; s++ )
 	{
 		byte code = cachedBytes[s];
@@ -402,25 +462,35 @@ void Neo7Segment::DisplayTextMarquee( String text, uint8_t index, uint32_t color
 		{
 			for( int segment = 0; segment < 7; segment++ )
 			{
-				for ( int p = 0; p < 4; p++ )
+				for ( int p = 0; p < dispPixelSegment; p++ )
 				{
 					bool on = ( bitRead( code, segment) == 1 );
-									
-					if ( index == 0 && ( p == 1 || p == 3 ) )
+					bool evenPixel = ( (p % 2) == 0 ) ? true : false;
+
+					if ( index == 0 && !evenPixel )
 						on = false;
-					else if ( index == 1 && ( p == 0 || p == 2 ) )
+					else if ( index == 1 && evenPixel )
 						on = false;
 
 					pixels.setPixelColor( segmentsPixels[ segment ][ p ] + ( s * NUM_PIXELS_PER_BOARD ), on ? color : Color(0,0,0) );
 				}
 			}
 
-			#ifdef USEDP
-
+			if ( dispUseDP )
+			{
 				bool on = ( bitRead( code, 7) == 1 );
-				pixels.setPixelColor( segmentsPixels[ 7 ][ 0 ] + ( s * NUM_PIXELS_PER_BOARD ), on ? color : Color(0,0,0));
+				for ( int p = 0; p < dispPixelDp; p++ )
+				{
+					bool evenPixel = ( (p % 2) == 0 ) ? true : false;
 
-			#endif
+					if ( index == 0 && !evenPixel && dispPixelDp > 1 )
+						on = false;
+					else if ( index == 1 && evenPixel && dispPixelDp > 1 )
+						on = false;
+
+					pixels.setPixelColor( segmentsPixels[ 7 ][ p ] + ( s * NUM_PIXELS_PER_BOARD ), on ? color : Color(0,0,0) );
+				}
+			}
 		}
 	}
 	// we have finished setting all of the colors on each segment for this Neo7Segment, so lets turn on the pixels
@@ -437,7 +507,7 @@ void Neo7Segment::DisplayTextChaser( String text, uint8_t index, uint32_t color 
 	// Clamp the length, so text longer than the display count is ignored
 	int lengthOfLoop = min( dispCount, (uint8_t)text.length() );
 
-	// Grab the byte (bits) for the segmens for the character passed in
+	// Grab the byte (bits) for the segments for the character passed in
 	for ( int s = 0; s < lengthOfLoop; s++ )
 	{
 		byte code = cachedBytes[s];
@@ -446,7 +516,7 @@ void Neo7Segment::DisplayTextChaser( String text, uint8_t index, uint32_t color 
 		{
 			for( int segment = 0; segment < 7; segment++ )
 			{
-				for ( int p = 0; p < 4; p++ )
+				for ( int p = 0; p < dispPixelSegment; p++ )
 				{
 					bool on = ( bitRead( code, segment) == 1 );
 									
@@ -457,12 +527,12 @@ void Neo7Segment::DisplayTextChaser( String text, uint8_t index, uint32_t color 
 				}
 			}
 
-			#ifdef USEDP
-
+			if ( dispUseDP )
+			{
 				bool on = ( bitRead( code, 7) == 1 );
-				pixels.setPixelColor( segmentsPixels[ 7 ][ 0 ] + ( s * NUM_PIXELS_PER_BOARD ), on ? color : Color(0,0,0));
-
-			#endif
+				for ( int p = 0; p < dispPixelDp; p++ )
+					pixels.setPixelColor(segmentsPixels[ 7 ][ p ] + ( s * NUM_PIXELS_PER_BOARD ), on ? color : Color(0,0,0) );
+			}
 		}
 	}
 	// we have finished setting all of the colors on each segment for this Neo7Segment, so lets turn on the pixels
@@ -481,7 +551,7 @@ void Neo7Segment::DisplayTextColorCycle( String text, uint8_t index )
 
 	uint32_t color;
 	
-	// Grab the byte (bits) for the segmens for the character passed in
+	// Grab the byte (bits) for the segments for the character passed in
 	for ( int s = 0; s < lengthOfLoop; s++ )
 	{
 		byte code = cachedBytes[s];
@@ -493,20 +563,20 @@ void Neo7Segment::DisplayTextColorCycle( String text, uint8_t index )
 			for( int segment = 0; segment < 7; segment++ )
 			{
 				bool on = ( bitRead( code, segment) == 1 );
-				for ( int p = 0; p < 4; p++ )
+				for ( int p = 0; p < dispPixelSegment; p++ )
 				{
 					color = Wheel( colorStart & 255 );
 					pixels.setPixelColor( segmentsPixels[ segment ][ p ] + ( s * NUM_PIXELS_PER_BOARD ), on ? color : Color(0,0,0) );
-					colorStart+=(255/28);	
+					colorStart+=(255/dispPixelSegment*7);
 				}
 			}
 
-			#ifdef USEDP
-
+			if ( dispUseDP )
+			{
 				bool on = ( bitRead( code, 7) == 1 );
-				pixels.setPixelColor( segmentsPixels[ 7 ][ 0 ] + ( s * NUM_PIXELS_PER_BOARD ), on ? color : Color(0,0,0));
-
-			#endif
+				for ( int p = 0; p < dispPixelDp; p++ )
+					pixels.setPixelColor( segmentsPixels[ 7 ][ p ] + ( s * NUM_PIXELS_PER_BOARD ), on ? color : Color(0,0,0) );
+			}
 		}
 	}
 
@@ -525,7 +595,7 @@ void Neo7Segment::DisplayTextColor( String text, uint32_t color )
 	// Clamp the length, so text longer than the display count is ignored
 	int lengthOfLoop = min( dispCount, (uint8_t)text.length() );
 
-	// Grab the byte (bits) for the segmens for the character passed in
+	// Grab the byte (bits) for the segments for the character passed in
 	for ( int s = 0; s < lengthOfLoop; s++ )
 	{
 		byte code = cachedBytes[s];
@@ -535,16 +605,52 @@ void Neo7Segment::DisplayTextColor( String text, uint32_t color )
 			for( int segment = 0; segment < 7; segment++ )
 			{
 				bool on = ( bitRead( code, segment) == 1 );
-				for ( int p = 0; p < 4; p++ )
+				for ( int p = 0; p < dispPixelSegment; p++ )
 					pixels.setPixelColor( segmentsPixels[ segment ][ p ] + ( s * NUM_PIXELS_PER_BOARD ), on ? color : Color(0,0,0) );
 			}
 
-			#ifdef USEDP
-
+			if ( dispUseDP )
+			{
 				bool on = ( bitRead( code, 7) == 1 );
-				pixels.setPixelColor( segmentsPixels[ 7 ][ 0 ] + ( s * NUM_PIXELS_PER_BOARD ), on ? color : Color(0,0,0));
+				for ( int p = 0; p < dispPixelDp; p++ )
+					pixels.setPixelColor( segmentsPixels[ 7 ][ p ] + ( s * NUM_PIXELS_PER_BOARD ), on ? color : Color(0,0,0) );
+			}
+		}
+	}
+	// we have finished setting all of the colors on each segment for this Neo7Segment, so lets turn on the pixels
+	pixels.show();
+}
 
-			#endif
+void Neo7Segment::DisplayTextDigitColor( String text, uint32_t color[] )
+{
+	if ( !isReady )
+		return;
+
+	CheckToCacheBytes( text );
+
+	// Clamp the length, so text longer than the display count is ignored
+	int lengthOfLoop = min( dispCount, (uint8_t)text.length() );
+
+	// Grab the byte (bits) for the segments for the character passed in
+	for ( int s = 0; s < lengthOfLoop; s++ )
+	{
+		byte code = cachedBytes[s];
+
+		if(code > -1)
+		{
+			for( int segment = 0; segment < 7; segment++ )
+			{
+				bool on = ( bitRead( code, segment) == 1 );
+				for ( int p = 0; p < dispPixelSegment; p++ )
+					pixels.setPixelColor( segmentsPixels[ segment ][ p ] + ( s * NUM_PIXELS_PER_BOARD ), on ? color[s] : Color(0,0,0) );
+			}
+
+			if ( dispUseDP )
+			{
+				bool on = ( bitRead( code, 7) == 1 );
+				for ( int p = 0; p < dispPixelDp; p++ )
+					pixels.setPixelColor( segmentsPixels[ 7 ][ p ] + ( s * NUM_PIXELS_PER_BOARD ), on ? color[s] : Color(0,0,0) );
+			}
 		}
 	}
 	// we have finished setting all of the colors on each segment for this Neo7Segment, so lets turn on the pixels
@@ -574,7 +680,7 @@ void Neo7Segment::DisplayTime( uint8_t hours, uint8_t mins, uint8_t secs, uint32
 	// Clamp the length, so text longer than the display count is ignored
 	int lengthOfLoop = min( dispCount, (uint8_t)text.length() );
 
-	// Grab the byte (bits) for the segmens for the character passed in
+	// Grab the byte (bits) for the segments for the character passed in
 	for ( int s = 0; s < lengthOfLoop; s++ )
 	{
 		byte code = cachedBytes[s];
@@ -584,26 +690,44 @@ void Neo7Segment::DisplayTime( uint8_t hours, uint8_t mins, uint8_t secs, uint32
 			uint32_t cachedColor = colorH;
 
 			// displaying mins, so work out new color
-			if ( s >= dispCount - 2 )
-			{
+			if ( s >= text.length() - 2 )
 				cachedColor = ( secs % 2 == 0 ) ? colorM2 : colorM;
-			}
 
 			for( int segment = 0; segment < 7; segment++ )
 			{
 				bool on = ( bitRead( code, segment) == 1 );
-				for ( int p = 0; p < 4; p++ )
+				for ( int p = 0; p < dispPixelSegment; p++ )
 					pixels.setPixelColor( segmentsPixels[ segment ][ p ] + ( s * NUM_PIXELS_PER_BOARD ), on ? cachedColor : Color(0,0,0) );
 			}
 
-			#ifdef USEDP
-
+			if (dispUseDP)
+			{
 				bool on = ( bitRead( code, 7) == 1 );
-				pixels.setPixelColor( segmentsPixels[ 7 ][ 0 ] + ( s * NUM_PIXELS_PER_BOARD ), on ? cachedColor : Color(0,0,0));
-
-			#endif
+				for ( int p = 0; p < dispPixelDp; p++ )
+					pixels.setPixelColor( segmentsPixels[ 7 ][ p ] + ( s * NUM_PIXELS_PER_BOARD ), on ? cachedColor : Color(0,0,0) );
+			}
 		}
 	}
+
+	// Blank extra digits
+	if ( text.length() < dispCount )
+	{
+		for ( int s = lengthOfLoop; s < dispCount; s++ )
+		{
+			for( int segment = 0; segment < 7; segment++ )
+			{
+				for ( int p = 0; p < dispPixelSegment; p++ )
+				pixels.setPixelColor( segmentsPixels[ segment ][ p ] + ( s * NUM_PIXELS_PER_BOARD ), Color(0,0,0) );
+			}
+
+			if (dispUseDP)
+			{
+				for ( int p = 0; p < dispPixelDp; p++ )
+					pixels.setPixelColor( segmentsPixels[ 7 ][ p ] + ( s * NUM_PIXELS_PER_BOARD ), Color(0,0,0) );
+			}
+		}
+	}
+
 	// we have finished setting all of the colors on each segment for this Neo7Segment, so lets turn on the pixels
 	pixels.show();
 }
@@ -621,27 +745,25 @@ void Neo7Segment::DisplayKnightRider( uint8_t index, uint32_t color )
 
 	uint32_t colorFade = Color( r, g, b );
 
-	int pixelIndex = ( index % (dispCount * 8 ) );
-	if ( pixelIndex > (dispCount * 4) - 1 )
+	int pixelIndex = ( index % (dispCount * (2*dispPixelSegment) ) );
+	if ( pixelIndex > (dispCount * dispPixelSegment) - 1 )
 	{
-		pixelIndex = ( dispCount * 8 ) - (pixelIndex + 1 );
+		pixelIndex = ( dispCount * ( 2*dispPixelSegment ) ) - (pixelIndex + 1 );
 		isForward = false;
 	}
 	
-	// Grab the byte (bits) for the segmens for the character passed in
+	// Grab the byte (bits) for the segments for the character passed in
 	for ( int s = 0; s < dispCount; s++ )
 	{
 		for( int segment = 0; segment < 7; segment++ )
 		{
-			for ( int p = 0; p < 4; p++ )
+			for ( int p = 0; p < dispPixelSegment; p++ )
 			{
 				if ( segment != 6 )
-				{
 					pixels.setPixelColor( segmentsPixels[ segment ][ p ] + ( s * NUM_PIXELS_PER_BOARD ), Color(0,0,0) );
-				}
 				else
 				{
-					uint8_t currentIndex = ( s * 4 + p );
+					uint8_t currentIndex = ( s * dispPixelSegment + p );
 					if ( currentIndex == pixelIndex )
 						pixels.setPixelColor( segmentsPixels[ segment ][ p ] + ( s * NUM_PIXELS_PER_BOARD ), color );
 					else if ( isForward && currentIndex == pixelIndex - 1 )
@@ -654,11 +776,11 @@ void Neo7Segment::DisplayKnightRider( uint8_t index, uint32_t color )
 			}		
 		}
 
-		#ifdef USEDP
-
-			pixels.setPixelColor( segmentsPixels[ 7 ][ 0 ] + ( s * NUM_PIXELS_PER_BOARD ), Color(0,0,0) );
-
-		#endif
+		if ( dispUseDP )
+		{
+			for ( int p = 0; p < dispPixelDp; p++ )
+				pixels.setPixelColor( segmentsPixels[ 7 ][ p ] + ( s * NUM_PIXELS_PER_BOARD ), Color(0,0,0) );
+		}
 	}
 	// we have finished setting all of the colors on each segment for this Neo7Segment, so lets turn on the pixels
 	pixels.show();
@@ -715,21 +837,21 @@ void Neo7Segment::DisplayBorderAnimation( uint8_t index, uint32_t color )
 			if ( s == curentDisplay )
 			{
 				bool on = ( bitRead( code, segment) == 1 );
-				for ( int p = 0; p < 4; p++ )
+				for ( int p = 0; p < dispPixelSegment; p++ )
 					pixels.setPixelColor( segmentsPixels[ segment ][ p ] + ( s * NUM_PIXELS_PER_BOARD ), on ? color : Color(0,0,0) );
 			}
 			else
 			{
-				for ( int p = 0; p < 4; p++ )
+				for ( int p = 0; p < dispPixelSegment; p++ )
 					pixels.setPixelColor( segmentsPixels[ segment ][ p ] + ( s * NUM_PIXELS_PER_BOARD ), Color(0,0,0) );
 			}
 		}
 
-		#ifdef USEDP
-
-			pixels.setPixelColor( segmentsPixels[ 7 ][ 0 ] + ( s * NUM_PIXELS_PER_BOARD ), Color(0,0,0) );
-
-		#endif
+		if ( dispUseDP )
+		{
+			for ( int p = 0; p < dispPixelDp; p++ )
+				pixels.setPixelColor( segmentsPixels[ 7 ][ p ] + ( s * NUM_PIXELS_PER_BOARD ), Color(0,0,0) );
+		}
 	}
 
 	// we have finished setting all of the colors on each segment for this Neo7Segment, so lets turn on the pixels
@@ -772,8 +894,34 @@ void Neo7Segment::SetDigit( uint8_t digit, String text, uint32_t color )
 {
 	if ( !isReady )
 		return;
-		
+
+	if ( digit < 0 || digit > dispCount )
+		return;
+
+	CheckToCacheBytes( text );
+
+	byte code = cachedBytes[0]; //No matter the length of string received, only first character with it's point will be displayed on requested digit
+
+	if(code > -1)
+	{
+		for( int segment = 0; segment < 7; segment++ )
+		{
+			bool on = ( bitRead( code, segment) == 1 );
+			for ( int p = 0; p < dispPixelSegment; p++ )
+				pixels.setPixelColor( segmentsPixels[ segment ][ p ] + ( digit * NUM_PIXELS_PER_BOARD ), on ? color : Color(0,0,0) );
+		}
+
+		if ( dispUseDP )
+		{
+			bool on = ( bitRead( code, 7) == 1 );
+			for ( int p = 0; p < dispPixelDp; p++ )
+				pixels.setPixelColor( segmentsPixels[ 7 ][ p ] + ( digit * NUM_PIXELS_PER_BOARD ), on ? color : Color(0,0,0) );
+		}
+	}
+
+	pixels.show();
 }
+
 void Neo7Segment::SetDigitSegments( uint8_t digit, byte bits, uint32_t color )
 {
 	if ( !isReady )
@@ -785,16 +933,16 @@ void Neo7Segment::SetDigitSegments( uint8_t digit, byte bits, uint32_t color )
 	for( int segment = 0; segment < 7; segment++ )
 	{
 		bool on = ( bitRead( bits, segment ) == 1 );
-		for ( int p = 0; p < 4; p++ )
+		for ( int p = 0; p < dispPixelSegment; p++ )
 			pixels.setPixelColor( segmentsPixels[ segment ][ p ] + ( digit * NUM_PIXELS_PER_BOARD ), on ? color : Color(0,0,0) );		
 	}
 
-	#ifdef USEDP
-
-		bool on = ( bitRead( bits, 7 ) == 1 );
-		pixels.setPixelColor( segmentsPixels[ 7 ][ 0 ] + ( digit * NUM_PIXELS_PER_BOARD ), on ? color : Color(0,0,0) );
-
-	#endif
+	if ( dispUseDP )
+	{
+		bool on = ( bitRead( bits, 7) == 1 );
+		for ( int p = 0; p < dispPixelDp; p++ )
+			pixels.setPixelColor( segmentsPixels[ 7 ][ p ] + ( digit * NUM_PIXELS_PER_BOARD ), on ? color : Color(0,0,0) );
+	}
 
 	pixels.show();
 }
@@ -839,8 +987,6 @@ String Neo7Segment::PadTimeData( int8_t data )
   return String(data);
 }
 
-
-
 // Input a value 0 to 255 to get a color value.
 // The colours are a transition r - g - b - back to r.
 uint32_t Neo7Segment::Wheel(byte WheelPos )
@@ -868,7 +1014,6 @@ uint8_t Neo7Segment::Green( uint32_t col )
 {
 	return col >> 8;
 }
-
 
 uint8_t Neo7Segment::Blue( uint32_t col )
 {

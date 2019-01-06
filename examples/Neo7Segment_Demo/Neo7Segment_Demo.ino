@@ -1,13 +1,20 @@
+//Displays different designs
+//Changes feature every 5 seconds
 #include <Neo7Segment.h>
 
-// Initalise the display with 5 Neo7Segment boards connected to GPIO 4
-Neo7Segment disp( 5, 4 );
+#define PIXELS_DIGITS       5   // Number of digits
+#define PIXELS_PER_SEGMENT  4   // Pixels per segment - If you want more than 10 pixels per segment, modify the Neo7Segment_Var.cpp
+#define PIXELS_PER_POINT    1   // Pixels per decimal point - CANNOT be higher than PIXELS_PER_SEGMENT
+#define PIXELS_PIN          4   // Pin number
+
+// Initalise the display with 5 Neo7Segment boards, 4 LEDs per segment, 1 decimal point LED, connected to GPIO 4
+Neo7Segment disp(PIXELS_DIGITS, PIXELS_PER_SEGMENT, PIXELS_PER_POINT, PIXELS_PIN);
 
 int loopIndex = 0;
 byte rainbowIndex = 0;
 unsigned long nextRainbow = 0;
 int displayFeature = 0;
-int nextSwitch = 10000;
+long nextSwitch = millis();
 
 void setup()
 {
@@ -34,12 +41,16 @@ void loop()
   if ( millis() > nextSwitch )
   {
     nextSwitch = millis() + 5000;
-    displayFeature = ( displayFeature + 1 ) % 11;
+    displayFeature = ( displayFeature + 1 ) % 13;
   }
 
   // Display stuff on the Neo7Segment displays
   if ( nextRainbow < millis() )
-  {
+    colorChangingSequences();
+}
+
+void colorChangingSequences()
+{
     switch( displayFeature )
     {
       case 0:
@@ -97,7 +108,7 @@ void loop()
         nextRainbow = millis() + 25;
         rainbowIndex+=5;
         loopIndex++;
-        if ( loopIndex > 3 )
+        if ( loopIndex > ( PIXELS_PER_SEGMENT-1 ) )
           loopIndex = 0;
 
         disp.DisplayTextChaser("lolol", loopIndex, disp.Wheel( rainbowIndex & 255 ) );
@@ -106,11 +117,11 @@ void loop()
 
       case 5:
         rainbowIndex++;
-      
+
         if ( rainbowIndex % 5 == 0 )
         {
           loopIndex++;
-          if ( loopIndex == disp.GetSpinAllLength() )
+          if ( loopIndex >= disp.GetSpinAllLength() )
             loopIndex = 0;
         }
         
@@ -119,9 +130,17 @@ void loop()
         disp.SetDigitSegments( 2, disp.GetSpinAllAtIndex( loopIndex ), disp.Color(0, 0, 150) );
         disp.SetDigitSegments( 3, disp.GetSpinAllAtIndex( loopIndex ), disp.Color(0, 0, 200) );
         disp.SetDigitSegments( 4, disp.GetSpinAllAtIndex( loopIndex ), disp.Color(0, 0, 250) );
+
+        for (int i = 5; i<PIXELS_DIGITS; i++)
+          disp.SetDigit(i, "", disp.Color(0, 0, 0));
+
+        nextRainbow = millis() + 10;
         break;
 
       case 6:
+        if (rainbowIndex > (2*PIXELS_PER_SEGMENT*PIXELS_DIGITS))
+          rainbowIndex = 0;
+
         disp.DisplayKnightRider( rainbowIndex, disp.Color(255,0,255) );
         nextRainbow = millis() + 80;
         rainbowIndex++;
@@ -147,12 +166,37 @@ void loop()
         break;
 
       case 10:
-        disp.DisplayTextColorCycle( "0....0", rainbowIndex );
+        disp.DisplayTextColorCycle( "0....0    ", rainbowIndex );
         nextRainbow = millis() + 10;
         rainbowIndex++;
         break;
 
-    }
-  }
-}
+      case 11: // Same as case #5, but allows to send complete string and change each digit's color
+        uint32_t digitColors[PIXELS_DIGITS];
+        digitColors[0] = disp.Color(255, 0, 0);
+        digitColors[1] = disp.Color(127, 127, 0);
+        digitColors[2] = disp.Color(0, 255, 0);
+        digitColors[3] = disp.Color(0, 127, 127);
+        digitColors[4] = disp.Color(0, 0, 255);
 
+        disp.DisplayTextDigitColor("8.8.8.8.8.", digitColors);
+        nextRainbow = millis() + 50;
+        rainbowIndex++;
+        break;
+
+      case 12: // Same as case #5, but allows to send string character (only first will be used) and change only one digit at a time
+        disp.SetDigit(0, "5", disp.Color(0, 0, 255));
+        disp.SetDigit(1, "4", disp.Color(0, 127, 127));
+        disp.SetDigit(2, "3", disp.Color(0, 255, 0));
+        disp.SetDigit(3, "2", disp.Color(127, 127, 0));
+        disp.SetDigit(4, "1", disp.Color(255, 0, 0));
+
+        nextRainbow = millis() + 50;
+        rainbowIndex++;
+        break;
+
+      default:
+        displayFeature = 0;
+        break;
+    }
+}
