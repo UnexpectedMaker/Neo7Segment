@@ -523,6 +523,7 @@ void Neo7Segment::DisplayTextMarquee( String text, uint8_t index, uint32_t color
 			}
 		}
 	}
+
 	// we have finished setting all of the colors on each segment for this Neo7Segment, so lets turn on the pixels
 	pixels.show();
 }
@@ -565,6 +566,7 @@ void Neo7Segment::DisplayTextChaser( String text, uint8_t index, uint32_t color 
 			}
 		}
 	}
+
 	// we have finished setting all of the colors on each segment for this Neo7Segment, so lets turn on the pixels
 	pixels.show();
 }
@@ -647,6 +649,7 @@ void Neo7Segment::DisplayTextColor( String text, uint32_t color )
 			}
 		}
 	}
+
 	// we have finished setting all of the colors on each segment for this Neo7Segment, so lets turn on the pixels
 	pixels.show();
 }
@@ -683,6 +686,7 @@ void Neo7Segment::DisplayTextDigitColor( String text, uint32_t color[] )
 			}
 		}
 	}
+
 	// we have finished setting all of the colors on each segment for this Neo7Segment, so lets turn on the pixels
 	pixels.show();
 }
@@ -812,6 +816,7 @@ void Neo7Segment::DisplayKnightRider( uint8_t index, uint32_t color )
 				pixels.setPixelColor( segmentsPixels[ 7 ][ p ] + ( s * NUM_PIXELS_PER_BOARD ), Color(0,0,0) );
 		}
 	}
+
 	// we have finished setting all of the colors on each segment for this Neo7Segment, so lets turn on the pixels
 	pixels.show();
 }
@@ -949,6 +954,7 @@ void Neo7Segment::SetDigit( uint8_t digit, String text, uint32_t color )
 		}
 	}
 
+	// we have finished setting all of the colors on each segment for this Neo7Segment, so lets turn on the pixels
 	pixels.show();
 }
 
@@ -974,6 +980,7 @@ void Neo7Segment::SetDigitSegments( uint8_t digit, byte bits, uint32_t color )
 			pixels.setPixelColor( segmentsPixels[ 7 ][ p ] + ( digit * NUM_PIXELS_PER_BOARD ), on ? color : Color(0,0,0) );
 	}
 
+	// we have finished setting all of the colors on each segment for this Neo7Segment, so lets turn on the pixels
 	pixels.show();
 }
 
