@@ -17,7 +17,7 @@ You can then initialise the display with the following line that includes the nu
 You can also initialise the display with custom pixels per segment and pixel per decimal point
 
 	#define PIXELS_DIGITS       5   // Number of digits
-	#define PIXELS_PER_SEGMENT  4   // Pixels per segment - If you want more than 10 pixels per segment, modify the Neo7Segment_Var.cpp
+	#define PIXELS_PER_SEGMENT  4   // Pixels per segment - If you want more than 10 pixels per segment, modify the Neo7Segment.cpp
 	#define PIXELS_PER_POINT    1   // Pixels per decimal point - CANNOT be higher than PIXELS_PER_SEGMENT
 	#define PIXELS_PIN          4   // Pin number
 
