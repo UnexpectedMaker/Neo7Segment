@@ -747,7 +747,7 @@ void Neo7Segment::DisplayTime( uint8_t hours, uint8_t mins, uint8_t secs, uint32
 			for( int segment = 0; segment < 7; segment++ )
 			{
 				for ( int p = 0; p < dispPixelSegment; p++ )
-				pixels.setPixelColor( segmentsPixels[ segment ][ p ] + ( s * NUM_PIXELS_PER_BOARD ), Color(0,0,0) );
+					pixels.setPixelColor( segmentsPixels[ segment ][ p ] + ( s * NUM_PIXELS_PER_BOARD ), Color(0,0,0) );
 			}
 
 			if (dispUseDP)
