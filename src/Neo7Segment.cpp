@@ -11,6 +11,7 @@
 #include <Adafruit_NeoPixel.h>
 
 //#define DEBUG
+#define USEDP
 
 // Array of segment based rainbow colour values
 uint32_t segmentRainbow[7][3] {
@@ -142,13 +143,17 @@ byte AnimEdgeRight[4] 	{
 Neo7Segment::Neo7Segment( uint8_t displayCount, uint8_t dPixels, uint8_t dpPixels, uint8_t dPin )
 {
 	//Count number of pixels per decimal point (Between 0 and number of segment pixels)
-	dispPixelDp = constrain(dpPixels, 0, constrain(dPixels, 1, PIXELS_PER_SEGMENT_MAX));
+	#ifdef USEDP
+		dispPixelDp = constrain(dpPixels, 0, constrain(dPixels, 1, PIXELS_PER_SEGMENT_MAX));
+	#else
+		dispPixelDp = 0;
+	#endif
 
 	//Count number of pixels per digit board (Between 1 and maximum pixels)
 	NUM_PIXELS_PER_BOARD = ( constrain( dPixels, 1, PIXELS_PER_SEGMENT_MAX )*7) + dispPixelDp;
 
 	//Detect that decimal poiunt is used or not
-	dispUseDP = dpPixels>0 ? true : false;
+	dispUseDP = dispPixelDp>0 ? true : false;
 
 	dispPixelSegment = dPixels;
 	dispCount = displayCount;
@@ -157,6 +162,31 @@ Neo7Segment::Neo7Segment( uint8_t displayCount, uint8_t dPixels, uint8_t dpPixel
 	pixels.updateType( NEO_GRB + NEO_KHZ800 );
   	pixels.updateLength( dispCount * NUM_PIXELS_PER_BOARD );
   	pixels.setPin(dispPin);
+	isReady = false;
+}
+
+Neo7Segment::Neo7Segment( uint8_t displayCount, uint8_t dPin )
+{
+	//Count number of pixels per decimal point (Between 0 and number of segment pixels)
+	#ifdef USEDP
+		dispPixelDp = 1;
+	#else
+		dispPixelDp = 0;
+	#endif
+
+	//Count number of pixels per digit board (Between 1 and maximum pixels)
+	NUM_PIXELS_PER_BOARD = 28 + dispPixelDp;
+
+	//Detect that decimal poiunt is used or not
+	dispUseDP = dispPixelDp>0 ? true : false;
+
+	dispPixelSegment = 4;
+	dispCount = displayCount;
+	dispPin = dPin;
+	pixels = Adafruit_NeoPixel ();
+	pixels.updateType( NEO_GRB + NEO_KHZ800 );
+	pixels.updateLength( dispCount * NUM_PIXELS_PER_BOARD );
+	pixels.setPin(dispPin);
 	isReady = false;
 }
 

@@ -62,6 +62,7 @@
 class Neo7Segment
 {
 	public:
+		Neo7Segment( uint8_t displayCount, uint8_t dPin );
 		Neo7Segment( uint8_t displayCount, uint8_t dPixels, uint8_t dpPixels, uint8_t dPin );
 		~Neo7Segment();
 		
