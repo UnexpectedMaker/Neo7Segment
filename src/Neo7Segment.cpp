@@ -152,7 +152,7 @@ Neo7Segment::Neo7Segment( uint8_t displayCount, uint8_t dPixels, uint8_t dpPixel
 	//Count number of pixels per digit board (Between 1 and maximum pixels)
 	NUM_PIXELS_PER_BOARD = ( constrain( dPixels, 1, PIXELS_PER_SEGMENT_MAX )*7) + dispPixelDp;
 
-	//Detect that decimal poiunt is used or not
+	//Detect that decimal point is used or not
 	dispUseDP = dispPixelDp>0 ? true : false;
 
 	dispPixelSegment = dPixels;
@@ -177,7 +177,7 @@ Neo7Segment::Neo7Segment( uint8_t displayCount, uint8_t dPin )
 	//Count number of pixels per digit board (Between 1 and maximum pixels)
 	NUM_PIXELS_PER_BOARD = 28 + dispPixelDp;
 
-	//Detect that decimal poiunt is used or not
+	//Detect that decimal point is used or not
 	dispUseDP = dispPixelDp>0 ? true : false;
 
 	dispPixelSegment = 4;
