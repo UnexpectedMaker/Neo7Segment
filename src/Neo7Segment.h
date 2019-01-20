@@ -1,5 +1,5 @@
 // ---------------------------------------------------------------------------
-// Neo7Segment Library - v2.0.3 - 06/01/2019
+// Neo7Segment Library - v1.1.3 - 06/01/2019
 //
 // AUTHOR/LICENSE:
 // Created by Seon Rozenblum - seon@unexpectedmaker.com
@@ -8,8 +8,8 @@
 // Modified by SupremeSports 06/01/2019
 //
 // LINKS:
-// Project home: XXX <--
-// Blog: XXX <--
+// Project home: https://www.tindie.com/products/seonr/neo7segment-display/
+// website: http://unexpectedmaker.com
 //
 // DISCLAIMER:
 // This software is furnished "as is", without technical support, and with no 
@@ -31,10 +31,10 @@
 // HISTORY:
 
 //
-// 02/01/2019 v2.0.3  - Modified to allow the class to work with many different display sizes. By SupremeSports
-// 28/12/2018 v2.0.2  - Fixed few bugs with the variable arrays
-// 05/12/2018 v2.0.1  - Fixed decimal point definition. Custom number of pixels for decimal point. By SupremeSports
-// 05/12/2018 v2.0    - Custom number of pixel per segment. By SupremeSports
+// 02/01/2019 v1.1.3  - Modified to allow the class to work with many different display sizes. By SupremeSports
+// 28/12/2018 v1.1.2  - Fixed few bugs with the variable arrays
+// 05/12/2018 v1.1.1  - Fixed decimal point definition. Custom number of pixels for decimal point. By SupremeSports
+// 05/12/2018 v1.1.0    - Custom number of pixel per segment. By SupremeSports
 // 25/04/2018 v1.0.1  - Fixed bug due to change in Adafruit Neopixel library initialisation
 // 28/01/2018 v1.0    - Initial release.
 //
