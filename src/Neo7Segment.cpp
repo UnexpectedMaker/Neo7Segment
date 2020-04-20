@@ -1,6 +1,6 @@
 // ---------------------------------------------------------------------------
 // Created by Seon Rozenblum - seon@unexpectedmaker.com
-// Modified by Jean Gauthier P.Eng. - SupremeSports (2019-01-06)
+// Modified by Jean Gauthier P.Eng. - SupremeSports (2020-04-19)
 // Copyright 2016 License: GNU GPL v3 http://www.gnu.org/licenses/gpl-3.0.html
 //
 // See "Neo7Segment.h" for purpose, syntax, version history, links, and more.
@@ -25,11 +25,11 @@ uint32_t segmentRainbow[7][3] {
                             };
 
 // Available characters a 7 Segment display can show
-const byte ARRAY_SIZE = 34;
+const byte ARRAY_SIZE = 35;
 
 
 byte available_codes[ ARRAY_SIZE ][ 2 ] {
-							//   pgfedcba
+						      //   pgfedcba
 						  { '0', 0b00111111 },
 						  { '1', 0b00000110 },
 						  { '2', 0b01011011 },
@@ -46,10 +46,10 @@ byte available_codes[ ARRAY_SIZE ][ 2 ] {
 						  { 'd', 0b01011110 },
 						  { 'e', 0b01111001 },
 						  { 'f', 0b01110001 },
-						  { 'g', 0b01100111 },
-						  { 'h', 0b01110110 },
+						  { 'g', 0b01101111 },
+						  { 'h', 0b01110100 },
 						  { 'i', 0b00010000 },
-						  { 'j', 0b00011110 },
+						  { 'j', 0b00001110 },
 						  { 'l', 0b00110000 },
 						  { 'n', 0b01010100 },
 						  { 'o', 0b01011100 },
@@ -63,11 +63,12 @@ byte available_codes[ ARRAY_SIZE ][ 2 ] {
 						  { 'y', 0b01101110 },
 						  { 'z', 0b01011011 },
 						  { '-', 0b01000000 },
+                          			  { '_', 0b00001000 },
 						  { ' ', 0b00000000 }
 						};
 
 byte available_codes_upper[ ARRAY_SIZE ][ 2 ] {
-							//   pgfedcba
+						      //   pgfedcba
 						  { '0', 0b00111111 },
 						  { '1', 0b00000110 },
 						  { '2', 0b01011011 },
@@ -78,29 +79,30 @@ byte available_codes_upper[ ARRAY_SIZE ][ 2 ] {
 						  { '7', 0b00000111 },
 						  { '8', 0b01111111 },
 						  { '9', 0b01101111 },
-						  { 'a', 0b01110111 },
-						  { 'b', 0b01111111 },
-						  { 'c', 0b00111001 },
-						  { 'd', 0b00111111 },
-						  { 'e', 0b01111001 },
-						  { 'f', 0b01110001 },
-						  { 'g', 0b01100111 },
-						  { 'h', 0b01110110 },
-						  { 'i', 0b00110000 },
-						  { 'j', 0b00011110 },
-						  { 'l', 0b00111000 },
-						  { 'n', 0b00110111 },
-						  { 'o', 0b00111111 },
-						  { 'p', 0b01110011 },
-						  { 'q', 0b01100111 },
-						  { 'r', 0b00110001 },
-						  { 's', 0b01101101 },
-						  { 't', 0b01111000 },
-						  { 'u', 0b00111110 },
-						  { 'x', 0b01110110 },
-						  { 'y', 0b01101110 },
-						  { 'z', 0b01011011 },
+						  { 'A', 0b01110111 },
+						  { 'B', 0b01111111 },
+						  { 'C', 0b00111001 },
+						  { 'D', 0b01011110 },
+						  { 'E', 0b01111001 },
+						  { 'F', 0b01110001 },
+						  { 'G', 0b01101111 },
+						  { 'H', 0b01110110 },
+						  { 'I', 0b00110000 },
+						  { 'J', 0b00011110 },
+						  { 'L', 0b00111000 },
+						  { 'N', 0b00110111 },
+						  { 'O', 0b00111111 },
+						  { 'P', 0b01110011 },
+						  { 'Q', 0b01100111 },
+						  { 'R', 0b00110001 },
+						  { 'S', 0b01101101 },
+						  { 'T', 0b01111000 },
+						  { 'U', 0b00111110 },
+						  { 'X', 0b01110110 },
+						  { 'Y', 0b01101110 },
+						  { 'Z', 0b01011011 },
 						  { '-', 0b01000000 },
+                          			  { '_', 0b00001000 },
 						  { ' ', 0b00000000 }
 						};
 
@@ -319,7 +321,7 @@ String Neo7Segment::GetCharacterAtArrayIndex( int index )
 // Packed format is always RGB, regardless of LED strand color order.
 uint32_t Neo7Segment::Color(uint8_t r, uint8_t g, uint8_t b)
 {
-  return ((uint32_t)r << 16) | ((uint32_t)g <<  8) | b;
+	return ((uint32_t)r << 16) | ((uint32_t)g <<  8) | b;
 }
 
 void Neo7Segment::CheckToCacheBytes( String str )
@@ -999,29 +1001,24 @@ int Neo7Segment::FindIndexOfChar(String character)
 byte Neo7Segment::FindByteForCharater( String character )
 {
 	String s = character;
-	s.toLowerCase();
+	if ( isForcedUpper )
+        	s.toUpperCase();
 	for(int i=0; i< ARRAY_SIZE; i++)
 	{
-		if ( isForcedUpper )
-		{
-			if( s.equals( (String)( (char)available_codes_upper[i][0] ) ) )
-				return available_codes_upper[i][1];
-		}
-		else
-		{
-			if( s.equals( (String)( (char)available_codes[i][0] ) ) )
-				return available_codes[i][1];
-		}
+		if( s.equals( (String)( (char)available_codes[i][0] ) ) )
+		    return available_codes[i][1];
+		if( s.equals( (String)( (char)available_codes_upper[i][0] ) ) )
+		    return available_codes_upper[i][1];
 	}
 	return -1;
 }
 
 String Neo7Segment::PadTimeData( int8_t data )
 {
-  if( data < 10 )
-	return String("0") + String(data);
+  	if( data < 10 )
+		return String("0") + String(data);
 
-  return String(data);
+	return String(data);
 }
 
 // Input a value 0 to 255 to get a color value.
